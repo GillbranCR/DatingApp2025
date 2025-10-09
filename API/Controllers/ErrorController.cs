@@ -14,10 +14,10 @@ public class ErrorController : BaseApiController
     public IActionResult GetBadRequest() // 400
     {
         // throw new Exception("Invalid request")  500
-        var inputParam = -1;
-        if (inputParam <= 0) throw new ArgumentOutOfRangeException(nameof(inputParam));
+        //var inputParam = -1;
+        //if (inputParam <= 0) throw new ArgumentOutOfRangeException(nameof(inputParam));
         
-        return BadRequest("Invalid request");
+        return BadRequest("bad request");
     }
 
     [HttpGet("auth")]
