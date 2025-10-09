@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using API.Exceptions;
 
-namespace API.Middleware;
-public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
+namespace API.Middlewares;
+
+public class ExceptionMiddleware(
+    RequestDelegate next,
+    ILogger<ExceptionMiddleware> logger,
+    IHostEnvironment env)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -16,7 +15,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         {
             await next(context);
         }
-        catch (Exception ex)
+        catch (ArgumentOutOfRangeException ex)
         {
             logger.LogError(ex, "{message}", ex.Message);
             context.Response.ContentType = "application/json";
@@ -31,5 +30,21 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
 
             await context.Response.WriteAsync(json);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "{message}", ex.Message);
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            var response = env.IsDevelopment() ?
+                new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace) :
+                new ApiException(context.Response.StatusCode, ex.Message, "Internal server error");
+
+            var option = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var json = JsonSerializer.Serialize(response, option);
+
+            await context.Response.WriteAsync(json);
+        }
     }
+
 }
