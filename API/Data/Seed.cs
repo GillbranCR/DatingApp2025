@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
+
 public class Seed
 {
     public static async Task SeedUsers(AppDbContext context)
@@ -25,10 +22,9 @@ public class Seed
             return;
         }
 
-        using var hmac = new HMACSHA512();
-
         foreach (var seedUser in seedUsers)
         {
+            using var hmac = new HMACSHA512();
             var user = new AppUser
             {
                 Id = seedUser.Id,
@@ -57,7 +53,10 @@ public class Seed
                 Url = seedUser.ImageUrl!,
                 MemberId = seedUser.Id
             });
-            await context.SaveChangesAsync();
+
+            context.Users.Add(user);
         }
+
+        await context.SaveChangesAsync();
     }
 }
