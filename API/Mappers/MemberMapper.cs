@@ -1,10 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using API.Entities;
 
 namespace API.Mappers;
-public class MemberMapper
+public static class MemberMapper
 {
-    
+    public static Member ToDto(this Member member)
+    {
+        // Add the conversion operations here
+        return member;
+    }
+
+    public static Member ToResponse(this Member member)
+    {
+        // Add the conversion operations here
+        return member;
+    }
 }
