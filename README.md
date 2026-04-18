@@ -13,3 +13,4 @@ For running the C# API project you need to navigate to `./client` and execute th
 
 1. `npm install`
 1. `ng serve`
+
